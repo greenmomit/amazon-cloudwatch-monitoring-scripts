@@ -2,17 +2,20 @@
 DIR=$(cd $(dirname $0); pwd)
 PUT_SCRIPT="aws-scripts-mon/mon-put-instance-data.pl"
 
+AWS_ACCESS_KEY_ID=<YOUR_AWS_ACCESS_KEY_ID>
+AWS_SECRET_KEY=<YOUR_AWS_SECRET_KEY>
+
 KEY="--aws-access-key-id=${AWS_ACCESS_KEY_ID} --aws-secret-key=${AWS_SECRET_KEY}"
 MEM="--mem-util --mem-avail --mem-used --memory-units=megabytes"
 SWAP="--swap-util --swap-used "
-DISK="--disk-space-units=megabytes "
+DISK="--disk-space-units=gigabytes "
 
 MOUNT_POINTS=`df -T --exclude-type=tmpfs --exclude-type=devtmpfs | grep /dev | sed -e "s/^.\+[ ]\+\(\/[^ ]*\)$/\1/g"`
 for PATH in $MOUNT_POINTS
 do
   DISK="--disk-path=${PATH} --disk-space-util --disk-space-used --disk-space-avail ${DISK}"
 done
-OPTIONS="${KEY} ${MEM} ${SWAP} ${DISK}"
+OPTIONS="${KEY} ${MEM} ${DISK}"
 echo $OPTIONS;
 $DIR/$PUT_SCRIPT $OPTIONS;
 
